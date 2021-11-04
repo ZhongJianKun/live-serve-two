@@ -6,27 +6,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="./test.css">
+    <link rel="stylesheet" href="./test/a.css">
 </head>
 <style>
     .test{
-        background: red;
-        width: 200px;;;;;;;;;;;;;;;;
+      background: red;
+      width: 200px;;;;;
     }
 </style>
 <body>
-    <div class="test">测试box1</div>
+    <div class="test">
+        测试box222sdsadadasds22222222
+    </div>
+    不是吧不是吧
     <input type="text">
+    <button>新增</button>
+
+    <!-- <script>
+      let btn = document.querySelector('button');
+      btn.onclick = 
+    </script> -->
     <script>
-       var ws = new WebSocket('ws://localhost:80');;;;;
-       ws.onopen = function (e) {
-        console.log('Connection toxxxxaax server opexned'+ws.readyState);
-       }
-       ws.onmessage=function (evt) {
-       }
-       ws.onclose = function(evt) {
-           console.log("WebSocketClosed!");
-           console.log(evt);
-       };
+        var ws = new WebSocket('ws://localhost:80');
+        ws.onopen = function (e) {
+         console.log('Connection toxxxxaax server opexned'+ws.readyState);
+        }
+        ws.onmessage=function (evt) {
+          let data = JSON.parse(evt.data);
+        //   console.log(data.fileUrl,'data');
+          if (data.type == "load") {
+             console.log('重载');
+             location.reload();
+          }else if (data.type == "cssLoad") {
+              refreshCSS(data.fileUrl)
+          }
+        }
+        ws.onclose = function(evt) {
+            console.log("WebSocketClosed!");
+            console.log(evt);
+        };
+        function refreshCSS(curUrl) {
+            console.log('执行重载');
+			var sheets = [].slice.call(document.getElementsByTagName("link"));
+			var head = document.getElementsByTagName("head")[0];;
+			for (var i = 0; i < sheets.length; ++i) {
+                let urlOne = location.protocol + '//' +  window.location.host+'/';
+                let urlTwo = sheets[i].href.slice(urlOne.length).split('?')[0];
+                // console.log(urlTwo);
+                // console.log(curUrl);
+                // console.log(urlTwo);
+                console.log(urlTwo,curUrl);
+                if (!(urlTwo == curUrl)) continue;
+                console.log('相同');
+				var elem = sheets[i];
+				var parent = elem.parentElement || head;
+				parent.removeChild(elem);
+				var rel = elem.rel;
+				if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+					var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+					elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+				}
+				parent.appendChild(elem);
+			}
+		}
+    </script>
+
+    <script>
+        var link = [].slice.call(document.getElementsByTagName("link"));
+        for (let i = 0; i < link.length; i++) {
+           console.log(link[i].href);
+           let url = location.protocol + '//' +  window.location.host+'/';
+           console.log(link[i].href.slice(url.length));
+        }
     </script>
 </body>
 </html>

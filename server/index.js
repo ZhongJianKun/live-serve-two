@@ -6,24 +6,26 @@
   const {wsServer} = require('./ws');
   const watchFile = require('./watchFile');
   const server =  http.createServer(function (req, res) {
-      // var pathname=__dirname+url.parse(req.url).pathname;
-      var pathname= 'C:/code/个人代码/编写vs code插件/test/client/index.html';
+      console.log(req.url,'req.url');
+      var pathname='C:/code/个人代码/编写vs code插件/test/client'+url.parse(req.url).pathname;
+    //   var pathname= 'C:/code/个人代码/编写vs code插件/test/client/index.html';
+    // console.log(pathname,'pathname');
       if (path.extname(pathname)=="") {
-          pathname+="/";
+        //   pathname+="/";
       }
       if (pathname.charAt(pathname.length-1)=="/"){
           pathname+="index.html";
       }
-      console.log(pathname,'pathnam1e');
-      //对用户访问的文件筛选进行依赖跟踪
-      watchFile.dependFile('C:/code/个人代码/编写vs code插件/test/client/index.html');
       //开启文件监听
       watchFile.onWatch('C:/code/个人代码/编写vs code插件/test/client');
+    //   console.log(pathname,'pathname');
       fs.exists(pathname,function(exists){
           if(exists){
-              setWriteHead(res,pathname);
+              let curFileFile = setWriteHead(res,pathname);
+              //对用户访问的文件筛选进行依赖跟踪
+              watchFile.dependFile(pathname);
               fs.readFile(pathname,function (err,data){
-                  res.end(prepareInserthtml(data));
+                  res.end(curFileFile == "html" ? prepareInserthtml(data) : data);
               });
           } else {
               res.writeHead(404, {"Content-Type": "text/html"});
@@ -40,22 +42,22 @@
     switch(path.extname(pathname)){
         case ".html":
             res.writeHead(200, {"Content-Type": "text/html"});
-            break;
+            return 'html';
         case ".js":
             res.writeHead(200, {"Content-Type": "text/javascript"});
-            break;
+            return 'js';
         case ".css":
             res.writeHead(200, {"Content-Type": "text/css"});
-            break;
+            return 'css';
         case ".gif":
             res.writeHead(200, {"Content-Type": "image/gif"});
-            break;
+            return 'gif';
         case ".jpg":
             res.writeHead(200, {"Content-Type": "image/jpeg"});
-            break;
+            return 'jpg';
         case ".png":
             res.writeHead(200, {"Content-Type": "image/png"});
-            break;
+            return 'png';
         default:
             res.writeHead(200, {"Content-Type": "application/octet-stream"});
     }
