@@ -5,9 +5,13 @@
   const {prepareInserthtml} = require('./operationHtml');
   const {wsServer} = require('./ws');
   const watchFile = require('./watchFile');
+  const open = require('open');
+  var defaurl ='C:/code/个人代码/编写vs code插件/test/';
+  open('http://localhost/client/index.html');
   const server =  http.createServer(function (req, res) {
       console.log(req.url,'req.url');
-      var pathname='C:/code/个人代码/编写vs code插件/test/client'+url.parse(req.url).pathname;
+      let pathname = defaurl + url.parse(req.url).pathname;
+      console.log(pathname,'pathname2');
     //   var pathname= 'C:/code/个人代码/编写vs code插件/test/client/index.html';
     // console.log(pathname,'pathname');
       if (path.extname(pathname)=="") {
@@ -18,7 +22,7 @@
       }
       //开启文件监听
       watchFile.onWatch('C:/code/个人代码/编写vs code插件/test/client');
-    //   console.log(pathname,'pathname');
+      console.log(pathname,'pathname');
       fs.exists(pathname,function(exists){
           if(exists){
               let curFileFile = setWriteHead(res,pathname);

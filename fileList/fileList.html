@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件列表</title>
+    <link rel="stylesheet" href="./iconfont/iconfont.css">
+    <script src="./iconfont/iconfont.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/balm-ui@next/dist/balm-ui.css"
+    />
+    <style>
+        .icon {
+          width: 2em;
+          height: 2em;
+          vertical-align: -0.15em;
+          fill: currentColor;
+          overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="app">
+        <ui-button icon="add" >SayHi</ui-button>
+        <ui-textfield outlined with-trailing-icon>
+            Your other name
+            <template #after="{ iconClass }">
+              <span :class="iconClass">
+                <ui-icon :size="18">clear</ui-icon>
+              </span>
+            </template>
+          </ui-textfield>
+    </div>
+    <script src="./common/vue3.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/balm-ui@next"></script>
+    <script src="https://cdn.jsdelivr.net/npm/balm-ui@next/dist/balm-ui-plus.js"></script>
+    <script>
+      const { createApp, reactive, toRefs } = Vue;
+    //   const { Search } = ElementPlus.ElIcon;
+    //   import { Search } from '@element-plus/icons'
+      const data = reactive({
+        searchFileName: 12
+      })
+      const app = createApp({
+        components: {
+            // Search
+        //   Search,DASDSADASWWWWWW
+        },
+        setup() {
+          return {
+            // Search,
+            ...toRefs(data)
+          }
+        }
+      });
+      app.use(BalmUI);
+      app.use(BalmUIPlus);
+    //   app.use(ElementPlus);
+      app.mount("#app");
+    </script>
+</body>
+</html>
