@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件列表</title>
+    <link rel="stylesheet" href="./iconfont/iconfont.css">
+    <script src="./iconfont/iconfont.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/balm-ui@next/dist/balm-ui.css" />
+    <style>
+        .icon {
+            width: 2em;
+            height: 2em;
+            vertical-align: -0.15em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+        
+        .search-file {
+            width: 100%;
+        }
+        
+        .file-card {
+            width: 300px
+        }
+        
+        .file-card .mdc-card__actions--full-bleed .mdc-card__action--button {
+            justify-content: start;
+        }
+        
+        .file-card-file-name {
+            margin-left: 10px;
+        }
+        
+        .content-box {
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="app">
+        <ui-textfield class="search-file" outlined with-trailing-icon>
+            搜索你的文件
+            <template #before="{ iconClass }">
+              <span :class="iconClass">
+                <ui-icon :size="18">clear</ui-icon>
+              </span>
+            </template>
+        </ui-textfield>
+        <div class="content-box">
+            <ui-card class="file-card" v-for="(item,index) of fileDate" :key="index">
+                <ui-card-actions full-bleed>
+                    <ui-button>
+                        <template #before>
+                        <svg class="icon" aria-hidden="true">
+                          <use :xlink:href="'#icon-' + item.extName"></use>
+                        </svg>
+                     </template>
+                        <div class="file-card-file-name">
+                            {{item.fileName}}
+                        </div>
+                        <template #after></template>
+                    </ui-button>
+                </ui-card-actions>
+            </ui-card>
+        </div>
+
+    </div>
+    <script src="./common/vue3.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/balm-ui@next"></script>
+    <script src="https://cdn.jsdelivr.net/npm/balm-ui@next/dist/balm-ui-plus.js"></script>
+    <script>
+        const {
+            createApp,
+            reactive,
+            toRefs
+        } = Vue;
+        //   const { Search } = ElementPlus.ElIcon;
+        //   import { Search } from '@element-plus/icons'
+        const data = reactive({
+            searchFileName: 12
+        })
+        const app = createApp({
+            components: {
+                // Search
+                //   Search,DASDSADASWWWWWW
+            },
+            setup() {
+                return {
+                    // Search,
+                    fileDate: [{
+                        extName: 'png',
+                        fileName: 'test.png',
+                    }],
+                    ...toRefs(data)
+                }
+            }
+        });
+        app.use(BalmUI);
+        app.use(BalmUIPlus);
+        //   app.use(ElementPlus);
+        app.mount("#app");
+    </script>
+</body>
+
+</html>
