@@ -6,9 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文件列表</title>
-    <link rel="stylesheet" href="./iconfont/iconfont.css">
-    <script src="./iconfont/iconfont.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/balm-ui@next/dist/balm-ui.css" />
+    <link rel="stylesheet" href="./iconfont/iconfont.css?x=x">
+    <script src="./iconfont/iconfont.js?x=x"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/balm-ui@next/dist/balm-ui.css?x=x" />
     <style>
         .icon {
             width: 2em;
@@ -70,14 +70,14 @@
         </div>
 
     </div>
-    <script src="./common/vue3.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/balm-ui@next"></script>
-    <script src="https://cdn.jsdelivr.net/npm/balm-ui@next/dist/balm-ui-plus.js"></script>
+    <script src="./common/vue3.js?x=x"></script>
+    <script src="https://cdn.jsdelivr.net/npm/balm-ui@next?x=x"></script>
+    <script src="https://cdn.jsdelivr.net/npm/balm-ui@next/dist/balm-ui-plus.js?x=x"></script>
     <script>
         const {
             createApp,
             reactive,
-            toRefs
+            toRefs,
         } = Vue;
         //   const { Search } = ElementPlus.ElIcon;
         //   import { Search } from '@element-plus/icons'
@@ -90,14 +90,22 @@
                 //   Search,DASDSADASWWWWWW
             },
             setup() {
-                return {
-                    // Search,
-                    fileDate: [{
-                        extName: 'png',
-                        fileName: 'test.png',
-                    }],
-                    ...toRefs(data)
-                }
+              let ws = new WebSocket('ws://localhost:80');
+              ws.onopen = function (e) {
+               console.log('ws,连接成功',ws);
+              }
+              ws.onmessage=function (evt) {
+                  console.log(evt);
+              }
+              return {
+                  // Search,
+                  fileDate: [{
+                      extName: 'png',
+                      fileName: 'test.png',
+                  }],
+                  ws:null,
+                  ...toRefs(data)
+              }
             }
         });
         app.use(BalmUI);

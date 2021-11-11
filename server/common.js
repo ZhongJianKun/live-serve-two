@@ -32,9 +32,8 @@ function findFileList(url) {
             (function iterator(i) {
                 //遍历数组files结束
                 console.log(files, 'files');
-                if (i == files.length) {
-                    resolve(files)
-                }
+                console.log(i , files.length,'i == files.length');
+                resolve(files)
                 floder.push(files[i]);
             })(0)
         })
