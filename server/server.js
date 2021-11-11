@@ -3,10 +3,11 @@
 const url = require('url');
 const path = require("path");
 const fs = require("fs");
-const { findFileList } = require('./common');
+const { findFileList ,findFileInfo } = require('./common');
 const { prepareInserthtml } = require('./operationHtml');
 const watchFile = require('./watchFile');
 let isDefault = false;
+const {wsServer} = require('./ws');
 const serverLogic = async (req,defaurl) =>{
     console.log(isDefault,'isDefault');
    //默认不返回文件列表的html
@@ -33,10 +34,15 @@ const serverLogic = async (req,defaurl) =>{
                //如果当前目录下面有index.html，就返回html
                pathname +='index.html'
            }else{
-               
+               let listData = await findFileInfo(pathname)
                //否则返回文件列表的html
                isDefault = true;
                pathname = fileListHtml;
+               //使用ws 向html发送文件信息
+               console.log(wsServer,'wsServer');
+               setTimeout(()=>{
+                 wsServer.onSend(listData)  
+               },500)
            }
        } catch (error) {
            console.log(error,'eerror');

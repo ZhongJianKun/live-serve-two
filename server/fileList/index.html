@@ -23,7 +23,8 @@
         }
         
         .file-card {
-            width: 300px
+            width: 300px;
+            margin: 10px;
         }
         
         .file-card .mdc-card__actions--full-bleed .mdc-card__action--button {
@@ -36,6 +37,11 @@
         
         .content-box {
             padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .file-img{
+            width: 25px;
         }
     </style>
 </head>
@@ -52,13 +58,15 @@
             </template>
         </ui-textfield>
         <div class="content-box">
-            <ui-card class="file-card" v-for="(item,index) of fileDate" :key="index">
+            <ui-card @click="onJumpPage(item)" class="file-card"  v-for="(item,index) of fileList" :key="index">
                 <ui-card-actions full-bleed>
                     <ui-button>
                         <template #before>
-                        <svg class="icon" aria-hidden="true">
+                        <svg v-if="item.isFile && item.extName" class="icon" aria-hidden="true">
                           <use :xlink:href="'#icon-' + item.extName"></use>
                         </svg>
+                        <img class="file-img" v-if="item.isFile && !item.extName" src="./common/notFile.png?x=x" alt="">
+                        <img class="file-img" v-if="item.isDirectory" src="./common/file.png?x=x" alt="">
                      </template>
                         <div class="file-card-file-name">
                             {{item.fileName}}
@@ -78,6 +86,7 @@
             createApp,
             reactive,
             toRefs,
+            ref
         } = Vue;
         //   const { Search } = ElementPlus.ElIcon;
         //   import { Search } from '@element-plus/icons'
@@ -91,19 +100,32 @@
             },
             setup() {
               let ws = new WebSocket('ws://localhost:80');
+              let fileList = ref(null);
               ws.onopen = function (e) {
                console.log('ws,连接成功',ws);
               }
               ws.onmessage=function (evt) {
-                  console.log(evt);
+                  let data = JSON.parse(evt.data);
+                  console.log(data,'data');
+                  fileList.value = data.map(item =>{
+                      item.extName = item.fileName.split('.')[1] ? item.fileName.split('.')[1] : '';
+                      return item;
+                  })
+              }
+              const onJumpPage = (item) =>{
+                let urlOne = location.protocol + '//' +  window.location.host + window.location.pathname  + item.fileName;
+                console.log(urlOne,'urlOne');
+                window.location.href= urlOne
               }
               return {
+                  onJumpPage,
                   // Search,
                   fileDate: [{
                       extName: 'png',
                       fileName: 'test.png',
                   }],
                   ws:null,
+                  fileList,
                   ...toRefs(data)
               }
             }
