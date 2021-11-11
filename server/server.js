@@ -14,16 +14,14 @@ const serverLogic = async (req,defaurl) =>{
    //当前访问的url
    const {url:route} = req;
    const parmas = route.split('?')[1];
-   let pathname = defaurl + url.parse(route).pathname;
+   let pathname = decodeURI(defaurl + url.parse(route).pathname)
    if (parmas == "x=x") {
        console.log('访问的是文件列表的资源');
-       pathname = dealWithResources(route)
+       pathname = decodeURI(dealWithResources(route))
    }
    console.log(route,'route');
    console.log(__dirname,'__dirname');
    let fileListHtml = path.resolve(__dirname, './fileList/index.html');
-//    fileListHtml = fileListHtml.split('\\');
-//    fileListHtml = fileListHtml.join('/')
    //如果访问不带文件路径
    if (path.extname(pathname) == "") {
        try {
@@ -100,7 +98,7 @@ const serverLogic = async (req,defaurl) =>{
             headInfo.contentType = "image/png";
             break;
         default:
-            headInfo.contentType = "application/octet-stream";
+            headInfo.contentType = "text/html";
     }
     return headInfo;   
 }
