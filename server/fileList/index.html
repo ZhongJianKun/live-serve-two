@@ -82,6 +82,7 @@
     <script src="https://cdn.jsdelivr.net/npm/balm-ui@next?x=x"></script>
     <script src="https://cdn.jsdelivr.net/npm/balm-ui@next/dist/balm-ui-plus.js?x=x"></script>
     <script>
+        // location.reload()
         const {
             createApp,
             reactive,
@@ -99,21 +100,30 @@
                 //   Search,DASDSADASWWWWWW
             },
             setup() {
-              let ws = new WebSocket('ws://localhost:80');
               let fileList = ref(null);
-              ws.onopen = function (e) {
-               console.log('ws,连接成功',ws);
+              let ws = null;
+              //webscockes
+              const webscockes = ()=>{
+                ws = new WebSocket('ws://localhost:80');
+                ws.onopen = function (e) {
+                 console.log('ws,连接成功',ws);
+                }
+                ws.onmessage=function (evt) {
+                    let data = JSON.parse(evt.data);
+                    console.log(data,'data');
+                    fileList.value = data.map(item =>{
+                        item.extName = item.fileName.split('.')[1] ? item.fileName.split('.')[1] : '';
+                        return item;
+                    })
+                }
               }
-              ws.onmessage=function (evt) {
-                  let data = JSON.parse(evt.data);
-                  console.log(data,'data');
-                  fileList.value = data.map(item =>{
-                      item.extName = item.fileName.split('.')[1] ? item.fileName.split('.')[1] : '';
-                      return item;
-                  })
-              }
+              //跳转方法
               const onJumpPage = (item) =>{
-                let urlOne = location.protocol + '//' +  window.location.host + window.location.pathname  + item.fileName;
+                let hostPathName = (window.location.host + window.location.pathname)
+                if (!hostPathName.endsWith('/')) {
+                    hostPathName += '/'
+                }
+                let urlOne = location.protocol + '//' +  hostPathName  + item.fileName;
                 console.log(urlOne,'urlOne');
                 window.location.href= urlOne
               }

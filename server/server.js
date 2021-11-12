@@ -9,21 +9,18 @@ const watchFile = require('./watchFile');
 let isDefault = false;
 const {wsServer} = require('./ws');
 const serverLogic = async (req,defaurl) =>{
-    console.log(isDefault,'isDefault');
    //默认不返回文件列表的html
    //当前访问的url
    const {url:route} = req;
    const parmas = route.split('?')[1];
    let pathname = decodeURI(defaurl + url.parse(route).pathname)
    if (parmas == "x=x") {
-       console.log('访问的是文件列表的资源');
        pathname = decodeURI(dealWithResources(route))
    }
-   console.log(route,'route');
-   console.log(__dirname,'__dirname');
    let fileListHtml = path.resolve(__dirname, './fileList/index.html');
    //如果访问不带文件路径
    if (path.extname(pathname) == "") {
+       console.log('当前的访问不带文件路径,是目录',pathname);
        try {
            let data = await findFileList(pathname)
            if (data.includes('index.html')) {
@@ -32,12 +29,12 @@ const serverLogic = async (req,defaurl) =>{
                //如果当前目录下面有index.html，就返回html
                pathname +='index.html'
            }else{
+            //    pathname = pathname.endsWith
                let listData = await findFileInfo(pathname)
                //否则返回文件列表的html
                isDefault = true;
                pathname = fileListHtml;
                //使用ws 向html发送文件信息
-               console.log(wsServer,'wsServer');
                setTimeout(()=>{
                  wsServer.onSend(listData)  
                },500)
@@ -48,19 +45,15 @@ const serverLogic = async (req,defaurl) =>{
    }
    //开启文件监听
    watchFile.onWatch('C:/code/个人代码/编写vs code插件/test/client');
-   console.log(pathname, '最后返回的pathname');
    let exists = fs.existsSync(pathname);
-   console.log(exists,'exists');
    if (exists) {
        let curFileFile = setWriteHead(pathname);
        //对用户访问的文件筛选进行依赖跟踪
        watchFile.dependFile(pathname);
        let fileData = fs.readFileSync(pathname);
        curFileFile.content = curFileFile.extName == "html" && !isDefault ? prepareInserthtml(fileData) : fileData;
-       console.log(curFileFile,'curFileFile');
        return curFileFile;
    } else {
-       console.log(pathname,'没有找到');
        return ({
          status:404,
          extName:'',
