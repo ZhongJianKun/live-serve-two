@@ -29,7 +29,8 @@ const serverLogic = async (req,defaurl) =>{
                //如果当前目录下面有index.html，就返回html
                pathname +='index.html'
            }else{
-            //    pathname = pathname.endsWith
+               // pathname = pathname.endsWith
+               console.log(pathname,'访问的路径xxxx');
                let listData = await findFileInfo(pathname)
                //否则返回文件列表的html
                isDefault = true;
@@ -37,7 +38,7 @@ const serverLogic = async (req,defaurl) =>{
                //使用ws 向html发送文件信息
                setTimeout(()=>{
                  wsServer.onSend(listData)  
-               },500)
+               },1000)
            }
        } catch (error) {
            console.log(error,'eerror');

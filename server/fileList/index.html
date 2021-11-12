@@ -81,6 +81,7 @@
     <script src="./common/vue3.js?x=x"></script>
     <script src="https://cdn.jsdelivr.net/npm/balm-ui@next?x=x"></script>
     <script src="https://cdn.jsdelivr.net/npm/balm-ui@next/dist/balm-ui-plus.js?x=x"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.1/axios.js"></script>
     <script>
         // location.reload()
         const {
@@ -100,13 +101,28 @@
                 //   Search,DASDSADASWWWWWW
             },
             setup() {
+              let hostPathName = location.protocol + '//' + (window.location.host + window.location.pathname);
               let fileList = ref(null);
               let ws = null;
+              fetchFn(location.protocol + '//' + '/localhost:8088' + '/api/getFileData',{
+                  data:'xxx'
+              })
+              .then(res =>{
+                  console.log(res.data);
+              })
+              .catch(err =>{
+                  console.log(err,'请求失败');
+              })
+              //开启ws服务
+              webscockes()
               //webscockes
-              const webscockes = ()=>{
+              function webscockes(){
                 ws = new WebSocket('ws://localhost:80');
                 ws.onopen = function (e) {
                  console.log('ws,连接成功',ws);
+                }
+                ws.onerror = function (e) {
+                 console.log('ws,连接失败',ws);
                 }
                 ws.onmessage=function (evt) {
                     let data = JSON.parse(evt.data);
@@ -118,22 +134,49 @@
                 }
               }
               //跳转方法
-              const onJumpPage = (item) =>{
-                let hostPathName = (window.location.host + window.location.pathname)
+              function onJumpPage (item){
                 if (!hostPathName.endsWith('/')) {
                     hostPathName += '/'
                 }
-                let urlOne = location.protocol + '//' +  hostPathName  + item.fileName;
+                let urlOne =   hostPathName  + item.fileName;
                 console.log(urlOne,'urlOne');
                 window.location.href= urlOne
               }
+              // fetch 请假简单模拟
+              function fetchFn(url,data={}){
+                // const parmas = {
+                //     credentials: 'include',
+                //     body:JSON.stringify(data),
+                //     cache: 'no-cache',
+                //     mode: 'no-cors',
+                //     redirect: 'follow', // manual, *follow, error
+                //     referrer: 'no-referrer', // *client, no-referrer
+                //     headers: {
+				//        'Accept': 'application/json', 
+				//        'Content-Type': 'application/json'
+                //     },
+                //     method:'POST',
+                // }
+                // return fetch(url, parmas)
+                // .then(response => {
+                //     console.log(response);
+                //     return response;
+                // })
+               return axios({
+                  method: 'post',
+                  url: url,
+                  headers: {
+				       'Accept': 'application/json', 
+				       'Content-Type': 'application/x-www-form-urlencoded',
+                  },
+                  data: {
+                    pathname:window.location.pathname
+                  }
+                })
+                .then(res => res)
+              }
               return {
                   onJumpPage,
-                  // Search,
-                  fileDate: [{
-                      extName: 'png',
-                      fileName: 'test.png',
-                  }],
                   ws:null,
                   fileList,
                   ...toRefs(data)
